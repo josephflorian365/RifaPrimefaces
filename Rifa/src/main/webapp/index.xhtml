@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"  
+      xmlns:h="http://java.sun.com/jsf/html"  
+      xmlns:f="http://java.sun.com/jsf/core"  
+      xmlns:p="http://primefaces.org/ui" >
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body id="body">
+        <p:growl id="msj" showDetail="true" >
+            <p:autoUpdate/>
+        </p:growl>
+        <h:form>
+            <p:panelGrid columns="2">
+                <p:outputLabel value="Nuevo Premio "/>
+                <p:commandButton value="Agregar" icon="ui-icon-plus"  oncomplete="PF('wdlgAgregarPremios').show();"/>
+                <p:outputLabel value="Ver Premios "/>
+                <p:commandButton value="Abrir>>" icon="ui-icon-search" oncomplete="PF('wdlgListadoPremios').show();">
+                    <p:ajax listener="#{premioC.listar()}" update="frmlistapremios"/>
+                </p:commandButton>
+            </p:panelGrid>
+        </h:form>
+        <p:dialog header="Registrar Premios" widgetVar="wdlgAgregarPremios" modal="true">
+            <h:form>
+                <p:panelGrid columns="2">
+                    <p:outputLabel value="Nombre "/>
+                    <p:inputText id="nom" maxlength="30" placeholder="Escribe aqui" value="#{premioC.premio.nompre}" required="true" requiredMessage="Requiere Nombre"   >
+                        <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú_' ']/"/>
+                    </p:inputText>
+                    <p:outputLabel value="Descripcion "/>
+                    <p:inputText id="des" maxlength="30" placeholder="Escribe aqui" value="#{premioC.premio.despre}" required="true" requiredMessage="Requiere Nombre"   >
+
+                    </p:inputText>
+                    <p:outputLabel value="Nº Premio "/>
+                    <p:spinner value="#{premioC.premio.ordpre}" min="1"/>
+                </p:panelGrid>
+                <p:separator/>
+                <p:commandButton value="Registrar" action="#{premioC.registrarPremio()}" update="frmpremio"/>
+            </h:form>
+        </p:dialog>
+        <p:dialog header="Lista de Premios" widgetVar="wdlgListadoPremios" modal="true">
+            <h:form id="frmlistapremios">
+
+
+                <p:dataTable emptyMessage="No hay datos" id="prem" var="premio" value="#{premioC.listapremio}" style="margin: 0 auto; ">
+                    <p:column headerText="PREMIO">
+                        <h:outputText value="#{premio.nompre}"/>
+                    </p:column>
+                    <p:column headerText="DESCRIPCION">
+                        <h:outputText value="#{premio.despre}"/>
+                    </p:column>
+                    <p:column headerText="ORDEN">
+                        <h:outputText value="#{premio.ordpre}"/>
+                    </p:column>
+                    <p:column headerText="ELIMINAR" style="width: 80px" exportable="false">
+                        <p:commandButton icon="ui-icon-trash" actionListener="#{premioC.cambiarEstadoPremio(premio)}"
+                                         update="frmlistapremios frmpremio"/>
+                    </p:column>
+                </p:dataTable>
+
+
+            </h:form>
+        </p:dialog>
+        <h:form id="frmpersona">
+            <p:panelGrid columns="2" style="margin: 0 auto; ">
+                <p:outputLabel value="Nombre "/>
+                <p:inputText id="nom" maxlength="30" placeholder="Escribe aqui" value="#{premioC.persona.nomper}" required="true" requiredMessage="Requiere Nombre"   >
+                    <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú_' ']/"/>
+                </p:inputText>
+                <p:commandButton value="Registrar" actionListener="#{premioC.registrar()}" update="frmpersona frmtablapersona"/>
+                <p:outputLabel id="imputnumber" value="#{premioC.persona.numper}"/>
+            </p:panelGrid>
+
+        </h:form>
+        <p:separator/>
+        <h:form id="frmtablapersona">
+            <p:dataTable var="tabper" id="tablapersona" value="#{premioC.listapersona}"
+                         rows="5" paginator="true" 
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                         rowsPerPageTemplate="5,10,15,20">
+
+                <p:column headerText="NOMBRE">
+                    <h:outputText value="#{tabper.nomper}"/>
+                </p:column>
+                <p:column headerText="Nª RIFA">
+                    <h:outputText value="#{tabper.numper}"/>
+                </p:column>
+                <p:column headerText="ELIMINAR" style="width: 80px" exportable="false">
+                    <p:commandButton  icon="ui-icon-trash" actionListener="#{premioC.cambiarEstadoPersona(tabper)}"
+                                     update="frmtablapersona">
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+        <p:separator/>
+        <h:form id="frmpremio">
+            <p:panelGrid columns="5" style="margin: 0 auto; ">
+                <p:outputLabel value="Intentos "/>
+                <p:selectOneMenu id="intentos" style="width: 200px;" value="#{premioC.intentos}" required="true" requiredMessage="Requiere Nª intentos" disabled="#{premioC.bloquear}">
+                    <f:selectItem noSelectionOption="true" itemLabel="Seleccione" itemValue="#{null}" />
+                    <f:selectItem itemValue="1" itemLabel="Uno" />
+                    <f:selectItem itemValue="2" itemLabel="Dos" />
+                    <f:selectItem itemValue="3" itemLabel="Tres" />
+                </p:selectOneMenu>
+                <p:outputLabel value="Elegir Nª/Premio "/>
+                <p:selectOneMenu id="selectpremio" value="#{premioC.premio.idpre}"
+                                 required="true" requiredMessage="Requiere premio" >
+                    <f:selectItem noSelectionOption="true" itemLabel="Seleccione" itemValue="#{null}"/>
+                    <f:selectItems value="#{premioC.listapremio}" var="premio"
+                                   itemValue="#{premio.idpre}" 
+                                   itemLabel="#{premio.nompre} #{premio.despre}"/>
+                </p:selectOneMenu>
+
+                <p:commandButton id="btnsortear" value="Sortear" actionListener="#{premioC.sortear()}" update="frmganador intentos selectpremio frmtablapersona"/>
+            </p:panelGrid>
+            <p:blockUI block="body" trigger="btnsortear">
+                <br>Cargando...</br>
+                <p:graphicImage value="imagenes/giraRuleta.gif"></p:graphicImage>
+            </p:blockUI>
+        </h:form>
+        <p:separator/>
+        <h:form id="frmganador">
+            <p:panelGrid columns="1" style="margin: 0 auto; ">
+                <p:outputLabel value="GANADOR" />
+                <p:outputLabel value="#{premioC.ganador} " />
+            </p:panelGrid>
+
+        </h:form>
+        <p:spacer style="width: 115px"/>
+
+    </h:body>
+</html>
+

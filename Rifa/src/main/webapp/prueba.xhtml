@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"  
+      xmlns:h="http://java.sun.com/jsf/html"  
+      xmlns:f="http://java.sun.com/jsf/core"  
+      xmlns:p="http://primefaces.org/ui" >
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <h:form>
+            <p:inputText id="pre" maxlength="30" placeholder="Escribe aqui" value="#{pruebaC.prueba.precio}"  />
+            <p:inputText id="tot" maxlength="30" placeholder="Escribe aqui" value="#{pruebaC.prueba.total}"  />
+            <p:commandButton value="Abrir>>" actionListener="#{pruebaC.agregar()}" update="tbl"/>
+
+            <p:dataTable var="lista" id="tbl" value="#{pruebaC.lista}"
+                         rows="5" paginator="true" 
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                         rowsPerPageTemplate="5,10,15,20">
+
+                <p:column headerText="PRECIO">
+                    <h:outputText value="#{lista.precio}"/>
+                </p:column>
+                <p:column headerText="TOTAL">
+                    <h:outputText value="#{lista.total}"/>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </h:body>
+</html>
+
